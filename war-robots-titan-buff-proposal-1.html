@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>War Robots — Titan & Titan Weapon Buff Proposal</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@300;400;500;600&family=Fira+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg:       #0a0c10;
+    --surface:  #111520;
+    --card:     #161b28;
+    --border:   #1e2840;
+    --accent:   #e8a020;
+    --gold:     #f5c842;
+    --buff:     #3ecf6a;
+    --nerf:     #e85c4a;
+    --neutral:  #5b9bd5;
+    --text:     #d4dce8;
+    --muted:    #6b7a94;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, #0d1220 0%, #111a2e 60%, #0d1220 100%);
+    border-bottom: 1px solid var(--accent);
+    padding: 40px 24px 32px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(232,160,32,0.08) 0%, transparent 70%);
+  }
+  header h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(20px, 4vw, 36px);
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    color: var(--gold);
+    text-shadow: 0 0 30px rgba(245,200,66,0.35);
+    position: relative;
+  }
+  header .sub {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(10px, 2vw, 13px);
+    letter-spacing: 0.25em;
+    color: var(--muted);
+    margin-top: 8px;
+    text-transform: uppercase;
+    position: relative;
+  }
+  .badge-row {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    justify-content: center; margin-top: 18px;
+    position: relative;
+  }
+  .badge {
+    padding: 4px 14px;
+    border-radius: 3px;
+    font-family: 'Fira Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .badge.buff  { background: rgba(62,207,106,0.12); border:1px solid var(--buff);  color: var(--buff); }
+  .badge.nerf  { background: rgba(232,92,74,0.12);  border:1px solid var(--nerf);  color: var(--nerf); }
+  .badge.rework{ background: rgba(91,155,213,0.12); border:1px solid var(--neutral);color: var(--neutral); }
+
+  /* ── NAV TABS ── */
+  nav {
+    display: flex; flex-wrap: wrap; gap: 2px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 16px;
+    position: sticky; top: 0; z-index: 50;
+  }
+  nav button {
+    background: none; border: none; cursor: pointer;
+    color: var(--muted);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    padding: 14px 14px;
+    text-transform: uppercase;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  nav button:hover { color: var(--text); }
+  nav button.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  /* ── MAIN ── */
+  main { max-width: 960px; margin: 0 auto; padding: 24px 16px 60px; }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ── SECTION TITLE ── */
+  .sec-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin: 32px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sec-title:first-child { margin-top: 0; }
+
+  /* ── PROPOSAL BLOCK ── */
+  .proposal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+  .proposal-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+  .proposal-header:hover { background: rgba(255,255,255,0.04); }
+  .proposal-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--text);
+    flex: 1;
+  }
+  .tag {
+    font-family: 'Fira Mono', monospace;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .tag.buff   { background: rgba(62,207,106,0.15); color: var(--buff); }
+  .tag.nerf   { background: rgba(232,92,74,0.15);  color: var(--nerf); }
+  .tag.rework { background: rgba(91,155,213,0.15); color: var(--neutral); }
+  .tag.new    { background: rgba(200,120,255,0.15);color: #c87aff; }
+  .chevron { color: var(--muted); font-size: 12px; transition: transform 0.2s; }
+  .proposal.open .chevron { transform: rotate(180deg); }
+
+  .proposal-body { padding: 16px; display: none; }
+  .proposal.open .proposal-body { display: block; }
+
+  /* ── STAT TABLE ── */
+  .stat-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+  .stat-table th {
+    font-family: 'Fira Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+    text-align: left;
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .stat-table td {
+    padding: 7px 10px;
+    font-family: 'Fira Mono', monospace;
+    font-size: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: middle;
+  }
+  .stat-table tr:last-child td { border-bottom: none; }
+  .stat-label { color: var(--text); }
+  .stat-old   { color: var(--muted); text-decoration: line-through; }
+  .stat-new   { color: var(--buff); font-weight: 500; }
+  .stat-new.nerf { color: var(--nerf); }
+  .pct-badge {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+  .pct-badge.up   { background: rgba(62,207,106,0.15); color: var(--buff); }
+  .pct-badge.down { background: rgba(232,92,74,0.15);  color: var(--nerf); }
+
+  /* ── NOTE ── */
+  .note {
+    background: rgba(91,155,213,0.07);
+    border-left: 3px solid var(--neutral);
+    padding: 10px 14px;
+    border-radius: 0 4px 4px 0;
+    font-size: 13px;
+    color: var(--text);
+    margin-top: 10px;
+    line-height: 1.7;
+  }
+  .note.conditional {
+    border-left-color: var(--accent);
+    background: rgba(232,160,32,0.07);
+  }
+
+  /* ── SKIN GRID ── */
+  .skin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .skin-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 12px 14px;
+  }
+  .skin-robot {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .skin-name {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gold);
+    margin-top: 4px;
+  }
+
+  /* ── CHANNEL POST ── */
+  .post-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 24px;
+    white-space: pre-wrap;
+    font-family: 'Inter', sans-serif;
+    font-size: 13.5px;
+    line-height: 1.8;
+    color: var(--text);
+    position: relative;
+  }
+  .copy-btn {
+    position: absolute; top: 12px; right: 12px;
+    background: rgba(232,160,32,0.15);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: 'Fira Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    padding: 5px 14px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .copy-btn:hover { background: rgba(232,160,32,0.28); }
+
+  /* ── CALCULATOR ── */
+  .calc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  @media(max-width:600px){ .calc-grid { grid-template-columns: 1fr; } }
+  .calc-group label {
+    display: block;
+    font-family: 'Fira Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .calc-group input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: 'Fira Mono', monospace;
+    font-size: 13px;
+    padding: 9px 12px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .calc-group input:focus { border-color: var(--accent); }
+  .calc-btn {
+    background: linear-gradient(135deg, #c87010, #e8a020);
+    border: none; border-radius: 4px;
+    color: #0a0c10;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 12px 28px;
+    cursor: pointer;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    transition: opacity 0.2s;
+  }
+  .calc-btn:hover { opacity: 0.85; }
+  .calc-result {
+    display: none;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px;
+  }
+  .calc-result.show { display: block; }
+  .result-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-family: 'Fira Mono', monospace;
+    font-size: 12px;
+  }
+  .result-row:last-child { border-bottom: none; }
+  .result-label { color: var(--muted); }
+  .result-val { color: var(--buff); font-weight: 600; }
+  .eff-bar-wrap { margin-top: 14px; }
+  .eff-bar-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .eff-bar-bg {
+    background: var(--border);
+    border-radius: 4px;
+    height: 10px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .eff-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--buff), var(--gold));
+    transition: width 0.8s ease;
+  }
+  .module-note {
+    background: rgba(91,155,213,0.07);
+    border: 1px solid rgba(91,155,213,0.2);
+    border-radius: 5px;
+    padding: 14px 16px;
+    margin-top: 0;
+  }
+  .module-note h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--neutral);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .module-note p { font-size: 13px; color: var(--text); line-height: 1.7; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>WAR ROBOTS — TITAN & TITAN WEAPON<br>BUFF / REWORK PROPOSAL</h1>
+  <p class="sub">Community Balance Feedback &nbsp;|&nbsp; Formal Submission</p>
+  <div class="badge-row">
+    <span class="badge buff">Buff</span>
+    <span class="badge nerf">Conditional Nerf</span>
+    <span class="badge rework">Rework / Module</span>
+  </div>
+</header>
+
+<nav>
+  <button class="active" onclick="showTab('general')">General</button>
+  <button onclick="showTab('t2titans')">T2 Titans</button>
+  <button onclick="showTab('t3titans')">T3 Titans</button>
+  <button onclick="showTab('t4titans')">T4 Titans</button>
+  <button onclick="showTab('weapons')">Titan Weapons</button>
+  <button onclick="showTab('skins')">Special Editions</button>
+  <button onclick="showTab('post')">Channel Post</button>
+  <button onclick="showTab('calc')">Effectiveness Calc</button>
+</nav>
+
+<main>
+
+<!-- ══════════════════════════════════════════════════════ GENERAL -->
+<section id="general" class="section active">
+  <p class="sec-title">General / Module Rework</p>
+  <div class="proposal open">
+    <div class="proposal-header" onclick="toggle(this)">
+      <span class="proposal-name">T1 & T2 Module Pathway Rework</span>
+      <span class="tag rework">Rework</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="proposal-body">
+      <div class="note">
+        <strong>Proposal:</strong> Tier 1 and Tier 2 robots and titans should share the same module pathway as Tier 3 and Tier 4 units. The current disparity creates a significant barrier to entry and devalues lower-tier units in competitive and mid-game scenarios.<br><br>
+        <strong>Request:</strong> Re-evaluate module slot access so that T1/T2 units receive equivalent module upgrade paths, ensuring progression consistency across all tiers.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ T2 TITANS -->
+<section id="t2titans" class="section">
+  <p class="sec-title">Tier 2 Titans</p>
+
+  <!-- ARTHUR -->
+  <div class="proposal open">
+    <div class="proposal-header" onclick="toggle(this)">
+      <span class="proposal-name">Arthur</span>
+      <span class="tag buff">Buff</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="proposal-body">
+      <table class="stat-table">
+        <tr><th>Stat</th><th>Current</th><th>Proposed</th><th>Change</th></tr>
+        <tr>
+          <td class="stat-label">Max Durability</td>
+          <td class="stat-old">480,700</td>
+          <td class="stat-new">514,300</td>
+          <td><span class="pct-badge up">+7.0%</span></td>
+        </tr>
+        <tr>
+          <td class="stat-label">Max Shield Durability</td>
+          <td class="stat-old">1,988,064</td>
+          <td class="stat-new">2,286,000</td>
+          <td><span class="pct-badge up">+15.0%</span></td>
+        </tr>
+        <tr>
+          <td class="stat-label">Max Speed</td>
+          <td class="stat-old">40 km/h</td>
+          <td class="stat-new">45 km/h</td>
+          <td><span class="pct-badge up">+12.5%</span></td>
+        </tr>
+      </table>
+      <div class="note">Arthur's role as a frontline tank is undercut by its current durability and shield values. A 7% durability increase and 15% shield buff, alongside a speed improvement to 45 km/h, restores its capacity to anchor the front line and hold positions.</div>
+    </div>
+  </div>
+
+  <!-- AO MING -->
+  <div class="proposal">
+    <div class="proposal-header" onclick="toggle(this)">
+      <span class="proposal-name">Ao Ming</span>
+      <span class="tag buff">Buff</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="proposal-body">
+      <table class="stat-table">
+        <tr><th>Stat</th><th>Current</th><th>Proposed</th><th>Change</th></tr>
+        <tr>
+          <td class="stat-label">Max Durability</td>
+          <td class="stat-old">402,000</td>
+          <td class="stat-new">430,000</td>
+          <td><span class="pct-badge up">+7.0%</span></td>
+        </tr>
+        <tr>
+          <td class="stat-label">Max Speed</td>
+          <td class="stat-old">40 km/h</td>
+          <td class="stat-new">45 km/h</td>
+          <td><span class="pct-badge up">+12.5%</span></td>
+        </tr>
+        <tr>
+          <td class="stat-label">Power of Repair</td>
+          <td class="stat-old">Base</td>
+          <td class="stat-new">+7% increase</td>
+          <td><span class="pct-badge up">+7.0%</span></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ T3 TITANS -->
+<section id="t3titans" class="section">
+  <p class="sec-title">Tier 3 Titans</p>
+
+  <!-- MUROMETZ -->
+  <div class="proposal">
+    <div class="proposal-header" onclick="toggle(this)">
+      <span class="proposal-name">Murometz</span>
+      <span class="tag new">New Skill</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="proposal-body">
+      <div class="note">
+        <strong>Addition — Pilot Skill: Safe Landing</strong><br>
+        Grants stealth upon activation of the <em>Hard Rain</em> ability. This addition gives Murometz a meaningful survivability window post-ability use, rewarding skilled timing and improving its viability in T3 competitive play.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ T4 TITANS -->
+<section id="t4titans" class="section">
+  <p class="sec-title">Tier 4 Titans</p>
+
+  <!-- LUCHADOR -->
+  <div class="proposal open">
+    <div class="proposal-header" onclick="toggle(this)">
+      <span class="proposal-name">Luchador</span>
+      <span class="tag buff">Buff</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="proposal-body">
+      <table class="stat-table">
+        <tr><th>Stat</th><th>Current</th><th>Proposed</th><th>Change</th></tr>
+        <tr>
+          <td class="stat-label">Frog Splash Cooldown</td>
+          <td class="stat-old">25 sec</td>
+          <td class="stat-new">22 sec</td>
+          <td><span class="pct-badge up">−12.0%</span></td>
+        </tr>
+      </table>
+      <div class="note">Reducing the cooldown from 25 to 22 seconds allows Luchador to engage more consistently in sustained fights, improving its burst cycle without breaking balance.</div>
+    </div>
+  </div>
+
+  <!-- INDRA -->
+  <div class="proposal">
+    <div class="proposal-header" onclick="toggle(this)">
+      <span class="proposal-name">Indra</span>
+      <span class="tag buff">Buff</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="proposal-body">
+      <table class="stat-table">
+        <tr><th>Stat</th><th>Current</th><th>Proposed</th><th>Change</th></tr>
+        <tr>
+          <td class="stat-label">Max Durability</td>
+          <td class="stat-old">600,000</td>
+          <td class="stat-new">630,000</td>
+          <td><span class="pct-badge up">+5.0%</span></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- HEIMDALL -->
+  <div class="proposal">
+    <div class="proposal-header" onclick="toggle(this)">
+      <span class="proposal-name">Heimdall</span>
+      <span class="tag rework">Status Note</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="proposal-body">
+      <div class="note">
+        Heimdall is regarded as a well-balanced titan in the current meta. <strong>No changes requested.</strong> This acknowledgement is included to demonstrate that this proposal is not a blanket buff request, but a considered, targeted evaluation.
+      </div>
+    </div>
+  </div>
+
+  <!-- AETHER -->
+  <div class="proposal">
+    <div class="proposal-header" onclick="toggle(this)">
+      <span class="proposal-name">Aether</span>
+      <span class="tag buff">Buff</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="proposal-body">
+      <table class="stat-table">
+        <tr><th>Stat</th><th>Current</th><th>Proposed</th><th>Change</th></tr>
+        <tr>
+          <td class="stat-label">Max Durability</td>
+          <td class="stat-old">Base</td>
+          <td class="stat-new">+7% increase</td>
+          <td><span class="pct-badge up">+7.0%</span></td>
+        </tr>
+        <tr>
+          <td class="stat-label">Forcefield Durability</td>
+          <td class="stat-old">Base</td>
+          <td class="stat-new">+7% increase</td>
+          <td><span class="pct-badge up">+7.0%</span></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- SIRIUS -->
+  <div class="proposal">
+    <div class="proposal-header" onclick="toggle(this)">
+      <span class="proposal-name">Sirius</span>
+      <span class="tag buff">Buff</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="proposal-body">
+      <table class="stat-table">
+        <tr><th>Stat</th><th>Current</th><th>Proposed</th><th>Change</th></tr>
+        <tr>
+          <td class="stat-label">Repair Rate</td>
+          <td class="stat-old">0.15</td>
+          <td class="stat-new">0.20</td>
+          <td><span class="pct-badge up">+33.3%</span></td>
+        </tr>
+      </table>
+      <div class="note">Sirius's repair role is undermined by an insufficient repair rate. Increasing from 0.15 to 0.20 meaningfully restores its support identity.</div>
+    </div>
+  </div>
+
+  <!-- BEDWYR -->
+  <div class="proposal">
+    <div class="proposal-header" onclick="toggle(this)">
+      <span class="proposal-name">Bedwyr</span>
+      <span class="tag buff">Buff</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="proposal-body">
+      <table class="stat-table">
+        <tr><th>Stat</th><th>Current</th><th>Proposed</th><th>Change</th></tr>
+        <tr>
+          <td class="stat-label">Max Durability Bonus</td>
+          <td class="stat-old">Base</td>
+          <td class="stat-new">+25,000</td>
+          <td><span class="pct-badge up">↑ Flat</span></td>
+        </tr>
+        <tr>
+          <td class="stat-label">Damage to Durability Conversion</td>
+          <td class="stat-old">Base</td>
+          <td class="stat-new">+4% conversion</td>
+          <td><span class="pct-badge up">+4.0%</span></td>
+        </tr>
+        <tr>
+          <td class="stat-label">Passive Repairable Durability</td>
+          <td class="stat-old">Base</td>
+          <td class="stat-new">+1,000</td>
+          <td><span class="pct-badge up">↑ Flat</span></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- DEVOURER -->
+  <div class="proposal">
+    <div class="proposal-header" onclick="toggle(this)">
+      <span class="proposal-name">Devourer</span>
+      <span class="tag rework">Rework</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="proposal-body">
+      <table class="stat-table">
+        <tr><th>Change</th><th>Detail</th></tr>
+        <tr>
+          <td class="stat-label">New Pilot Skill</td>
+          <td class="stat-new">Wonder Worker</td>
+        </tr>
+        <tr>
+          <td class="stat-label">Shadow Walk Speed Boost</td>
+          <td class="stat-new">+20 km/h during stealth</td>
+        </tr>
+        <tr>
+          <td class="stat-label">Stealth Mechanic</td>
+          <td class="stat-new">Repair-in-Stealth mechanics added</td>
+        </tr>
+      </table>
+      <div class="note">The addition of Wonder Worker, a speed boost during Shadow Walk, and repair-while-stealthed mechanics transforms Devourer into a viable hit-and-survive assassin that rewards positioning and ability timing.</div>
+    </div>
+  </div>
+
+  <!-- MAULER -->
+  <div class="proposal">
+    <div class="proposal-header" onclick="toggle(this)">
+      <span class="proposal-name">Mauler</span>
+      <span class="tag buff">Buff + Conditional Rework</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="proposal-body">
+      <table class="stat-table">
+        <tr><th>Stat</th><th>Current</th><th>Proposed</th><th>Change</th></tr>
+        <tr>
+          <td class="stat-label">Max Durability</td>
+          <td class="stat-old">660,000</td>
+          <td class="stat-new">690,000</td>
+          <td><span class="pct-badge up">+4.5%</span></td>
+        </tr>
+        <tr>
+          <td class="stat-label">Max Speed</td>
+          <td class="stat-old">40 km/h</td>
+          <td class="stat-new">50 km/h</td>
+          <td><span class="pct-badge up">+25.0%</span></td>
+        </tr>
+        <tr>
+          <td class="stat-label">DOT Defence Duration</td>
+          <td class="stat-old">2.5 sec</td>
+          <td class="stat-new">4.0 sec</td>
+          <td><span class="pct-badge up">+60.0%</span></td>
+        </tr>
+        <tr>
+          <td class="stat-label">Hook Cooldown</td>
+          <td class="stat-old">20 sec</td>
+          <td class="stat-new">17 sec</td>
+          <td><span class="pct-badge up">−15.0%</span></td>
+        </tr>
+      </table>
+      <div class="note conditional">
+        <strong>Conditional Deathmark Adjustments (if DOT defence rework is accepted):</strong><br><br>
+        <strong>Option A — Full DOT Defence Rework to pre-11.6.0 stats:</strong><br>
+        Deathmark per stack: 35% → 23.3% &nbsp;|&nbsp; Max Deathmark (16 stacks): 560% → 350%<br><br>
+        <strong>Option B — Proposed DOT Defence as above:</strong><br>
+        Deathmark per stack: 35% → 25% &nbsp;|&nbsp; Max Deathmark (16 stacks): 560% → 400%<br><br>
+        Either adjustment prevents Mauler from becoming overpowered while improving survivability.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ WEAPONS -->
+<section id="weapons" class="section">
+  <p class="sec-title">Titan Weapons</p>
+
+  <!-- MAHA VAJRA & VAJRA -->
+  <div class="proposal open">
+    <div class="proposal-header" onclick="toggle(this)">
+      <span class="proposal-name">Maha Vajra &amp; Vajra</span>
+      <span class="tag buff">Buff</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="proposal-body">
+      <table class="stat-table">
+        <tr><th>Stat</th><th>Current</th><th>Proposed</th><th>Change</th></tr>
+        <tr>
+          <td class="stat-label">Shot Grouping</td>
+          <td class="stat-old">Current dispersion</td>
+          <td class="stat-new">Improved grouping</td>
+          <td><span class="pct-badge up">↑ Accuracy</span></td>
+        </tr>
+        <tr>
+          <td class="stat-label">Damage per Particle</td>
+          <td class="stat-old">2,980</td>
+          <td class="stat-new">3,120</td>
+          <td><span class="pct-badge up">+4.7%</span></td>
+        </tr>
+        <tr>
+          <td class="stat-label">Effective Range</td>
+          <td class="stat-old">500 m</td>
+          <td class="stat-new">250 m</td>
+          <td><span class="pct-badge down">−50.0%</span></td>
+        </tr>
+      </table>
+      <div class="note">Reducing range trades long-range viability for close-quarters consistency — pairing increased damage per particle with improved shot grouping makes this a dominant CQC titan weapon.</div>
+    </div>
+  </div>
+
+  <!-- ANGUISHER & RUINER -->
+  <div class="proposal">
+    <div class="proposal-header" onclick="toggle(this)">
+      <span class="proposal-name">Anguisher &amp; Ruiner</span>
+      <span class="tag buff">Buff</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="proposal-body">
+      <table class="stat-table">
+        <tr><th>Stat</th><th>Current</th><th>Proposed</th><th>Change</th></tr>
+        <tr>
+          <td class="stat-label">Shot Grouping</td>
+          <td class="stat-old">Current dispersion</td>
+          <td class="stat-new">Improved grouping</td>
+          <td><span class="pct-badge up">↑ Accuracy</span></td>
+        </tr>
+        <tr>
+          <td class="stat-label">Damage per Particle</td>
+          <td class="stat-old">1,250</td>
+          <td class="stat-new">1,400</td>
+          <td><span class="pct-badge up">+12.0%</span></td>
+        </tr>
+        <tr>
+          <td class="stat-label">Effective Range</td>
+          <td class="stat-old">500 m</td>
+          <td class="stat-new">250 m</td>
+          <td><span class="pct-badge down">−50.0%</span></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- HUGINN & MUNINN -->
+  <div class="proposal">
+    <div class="proposal-header" onclick="toggle(this)">
+      <span class="proposal-name">Huginn &amp; Muninn</span>
+      <span class="tag buff">Buff</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="proposal-body">
+      <table class="stat-table">
+        <tr><th>Stat</th><th>Current</th><th>Proposed</th><th>Change</th></tr>
+        <tr>
+          <td class="stat-label">Reload Amount</td>
+          <td class="stat-old">30</td>
+          <td class="stat-new">45</td>
+          <td><span class="pct-badge up">+50.0%</span></td>
+        </tr>
+        <tr>
+          <td class="stat-label">Total Ammo</td>
+          <td class="stat-old">30</td>
+          <td class="stat-new">45</td>
+          <td><span class="pct-badge up">+50.0%</span></td>
+        </tr>
+        <tr>
+          <td class="stat-label">Huginn Damage per Particle</td>
+          <td class="stat-old">2,570</td>
+          <td class="stat-new">3,120</td>
+          <td><span class="pct-badge up">+21.4%</span></td>
+        </tr>
+        <tr>
+          <td class="stat-label">Muninn Damage per Particle</td>
+          <td class="stat-old">1,950</td>
+          <td class="stat-new">2,480</td>
+          <td><span class="pct-badge up">+27.2%</span></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- PYRO & INFERNO -->
+  <div class="proposal">
+    <div class="proposal-header" onclick="toggle(this)">
+      <span class="proposal-name">Pyro &amp; Inferno</span>
+      <span class="tag buff">Buff</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="proposal-body">
+      <table class="stat-table">
+        <tr><th>Stat</th><th>Current</th><th>Proposed</th><th>Change</th></tr>
+        <tr>
+          <td class="stat-label">Damage Output</td>
+          <td class="stat-old">Base</td>
+          <td class="stat-new">+15% increase</td>
+          <td><span class="pct-badge up">+15.0%</span></td>
+        </tr>
+        <tr>
+          <td class="stat-label">Time Before Cooling</td>
+          <td class="stat-old">4 sec</td>
+          <td class="stat-new">6 sec</td>
+          <td><span class="pct-badge up">+50.0%</span></td>
+        </tr>
+      </table>
+      <div class="note">Extended sustained fire time before cooling activates improves DPS uptime significantly and rewards aggressive sustained engagement.</div>
+    </div>
+  </div>
+
+  <!-- ARGON & OXY -->
+  <div class="proposal">
+    <div class="proposal-header" onclick="toggle(this)">
+      <span class="proposal-name">Argon &amp; Oxy</span>
+      <span class="tag buff">Buff</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="proposal-body">
+      <table class="stat-table">
+        <tr><th>Stat</th><th>Current</th><th>Proposed</th><th>Change</th></tr>
+        <tr>
+          <td class="stat-label">Effective Range</td>
+          <td class="stat-old">300 m</td>
+          <td class="stat-new">350 m</td>
+          <td><span class="pct-badge up">+16.7%</span></td>
+        </tr>
+      </table>
+      <div class="note">A modest range increase allows Argon/Oxy to contest engagements at a safer distance while maintaining their niche identity.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ SKINS -->
+<section id="skins" class="section">
+  <p class="sec-title">Special Edition Skin Concepts</p>
+  <div class="proposal open">
+    <div class="proposal-header" onclick="toggle(this)">
+      <span class="proposal-name">Titan Special Edition Proposals</span>
+      <span class="tag new">Creative</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="proposal-body">
+      <div class="skin-grid">
+        <div class="skin-card"><div class="skin-robot">Aether</div><div class="skin-name">Celestial Aether</div></div>
+        <div class="skin-card"><div class="skin-robot">Arthur</div><div class="skin-name">Royal Arthur</div></div>
+        <div class="skin-card"><div class="skin-robot">Arthur</div><div class="skin-name">Imperial Arthur</div></div>
+        <div class="skin-card"><div class="skin-robot">Rook</div><div class="skin-name">Fruit King Rook</div></div>
+        <div class="skin-card"><div class="skin-robot">Bedwyr</div><div class="skin-name">Gift Bringer Bedwyr</div></div>
+        <div class="skin-card"><div class="skin-robot">Bedwyr</div><div class="skin-name">Police Bedwyr</div></div>
+        <div class="skin-card"><div class="skin-robot">Heimdall</div><div class="skin-name">Cruel Heimdall</div></div>
+        <div class="skin-card"><div class="skin-robot">Sirius</div><div class="skin-name">Scavenger Sirius</div></div>
+        <div class="skin-card"><div class="skin-robot">Sharanga</div><div class="skin-name">Savanna Sharanga</div></div>
+        <div class="skin-card"><div class="skin-robot">Devourer</div><div class="skin-name">Clocksmith Devourer</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ CHANNEL POST -->
+<section id="post" class="section">
+  <p class="sec-title">Channel Post — Ready to Copy</p>
+  <div class="post-box" id="postText">
+<button class="copy-btn" onclick="copyPost()">Copy</button>
+⚙️ TITAN & TITAN WEAPON BALANCE PROPOSAL — COMMUNITY FEEDBACK SUBMISSION
+
+To the War Robots development team and community,
+
+The following is a structured balance proposal compiled on behalf of players who have observed sustained performance issues with a number of titans and titan weapons in the current meta. This is not a blanket buff request — where units are functioning well (e.g. Heimdall), no changes have been proposed. Every entry below has been evaluated with both competitive viability and overall game health in mind.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━
+🔧 GENERAL — MODULE REWORK
+━━━━━━━━━━━━━━━━━━━━━━━━━
+We formally request a re-evaluation of the module pathway for Tier 1 and Tier 2 robots and titans. These units should share the same module access as T3 and T4, removing a structural barrier that currently devalues lower-tier units and creates unfair progression gaps.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━
+🛡️ TIER 2 TITANS
+━━━━━━━━━━━━━━━━━━━━━━━━━
+ARTHUR
+• Max Durability: 480,700 → 514,300 (+7.0%)
+• Max Shield Durability: 1,988,064 → 2,286,000 (+15.0%)
+• Max Speed: 40 → 45 km/h (+12.5%)
+
+AO MING
+• Max Durability: 402,000 → 430,000 (+7.0%)
+• Max Speed: 40 → 45 km/h (+12.5%)
+• Power of Repair: +7%
+
+━━━━━━━━━━━━━━━━━━━━━━━━━
+🛡️ TIER 3 TITANS
+━━━━━━━━━━━━━━━━━━━━━━━━━
+MUROMETZ
+• New Pilot Skill: Safe Landing
+  (Grants stealth after activation of Hard Rain ability)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━
+⚡ TIER 4 TITANS
+━━━━━━━━━━━━━━━━━━━━━━━━━
+LUCHADOR
+• Frog Splash Cooldown: 25 → 22 sec (−12.0%)
+
+INDRA
+• Max Durability: 600,000 → 630,000 (+5.0%)
+
+HEIMDALL
+• No changes requested. Currently well-balanced.
+
+AETHER
+• Max Durability: +7%
+• Forcefield Durability: +7%
+
+SIRIUS
+• Repair Rate: 0.15 → 0.20 (+33.3%)
+
+BEDWYR
+• Max Durability Bonus: +25,000 (flat)
+• Damage to Durability Conversion: +4%
+• Passive Repairable Durability: +1,000 (flat)
+
+DEVOURER
+• New Pilot Skill: Wonder Worker
+• Shadow Walk Speed Boost: +20 km/h during stealth
+• Repair-in-Stealth mechanics added
+
+MAULER
+• Max Durability: 660,000 → 690,000 (+4.5%)
+• Max Speed: 40 → 50 km/h (+25.0%)
+• DOT Defence Duration: 2.5 → 4.0 sec (+60.0%)
+• Hook Cooldown: 20 → 17 sec (−15.0%)
+• [Conditional] Deathmark adjustment depending on DOT rework accepted (see full proposal)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━
+🔫 TITAN WEAPONS
+━━━━━━━━━━━━━━━━━━━━━━━━━
+MAHA VAJRA & VAJRA
+• Improved shot grouping / reduced dispersion
+• Damage per Particle: 2,980 → 3,120 (+4.7%)
+• Range: 500 → 250 m (intentional CQC rework)
+
+ANGUISHER & RUINER
+• Improved shot grouping / reduced dispersion
+• Damage per Particle: 1,250 → 1,400 (+12.0%)
+• Range: 500 → 250 m (intentional CQC rework)
+
+HUGINN & MUNINN
+• Reload Amount: 30 → 45 (+50%)
+• Total Ammo: 30 → 45 (+50%)
+• Huginn Damage per Particle: 2,570 → 3,120 (+21.4%)
+• Muninn Damage per Particle: 1,950 → 2,480 (+27.2%)
+
+PYRO & INFERNO
+• Damage: +15%
+• Time Before Cooling: 4 → 6 sec (+50%)
+
+ARGON & OXY
+• Effective Range: 300 → 350 m (+16.7%)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━
+🎨 SPECIAL EDITION CONCEPTS
+━━━━━━━━━━━━━━━━━━━━━━━━━
+• Celestial Aether
+• Royal Arthur / Imperial Arthur
+• Fruit King Rook
+• Gift Bringer Bedwyr / Police Bedwyr
+• Cruel Heimdall
+• Scavenger Sirius
+• Savanna Sharanga
+• Clocksmith Devourer
+
+━━━━━━━━━━━━━━━━━━━━━━━━━
+We appreciate any consideration given to these proposals. We welcome dialogue, counter-proposals, or partial implementations. The goal is a healthier, more balanced titan meta for all players.
+
+— Community Balance Review
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ CALCULATOR -->
+<section id="calc" class="section">
+  <p class="sec-title">Combat Effectiveness Calculator</p>
+  <div class="module-note" style="margin-bottom:20px">
+    <h3>How It Works</h3>
+    <p>Enter the before and after stats of any robot or titan. The calculator estimates the effective survivability increase (EHP change), DPS change, and an overall combat effectiveness score shift. Use it to validate whether a proposed buff is impactful or underpowered.</p>
+  </div>
+
+  <div class="calc-grid">
+    <div class="calc-group">
+      <label>Durability — Before</label>
+      <input type="number" id="durBefore" placeholder="e.g. 480700">
+    </div>
+    <div class="calc-group">
+      <label>Durability — After</label>
+      <input type="number" id="durAfter" placeholder="e.g. 514300">
+    </div>
+    <div class="calc-group">
+      <label>Shield — Before (0 if none)</label>
+      <input type="number" id="shieldBefore" placeholder="e.g. 1988064">
+    </div>
+    <div class="calc-group">
+      <label>Shield — After (0 if none)</label>
+      <input type="number" id="shieldAfter" placeholder="e.g. 2286000">
+    </div>
+    <div class="calc-group">
+      <label>Speed — Before (km/h)</label>
+      <input type="number" id="spdBefore" placeholder="e.g. 40">
+    </div>
+    <div class="calc-group">
+      <label>Speed — After (km/h)</label>
+      <input type="number" id="spdAfter" placeholder="e.g. 45">
+    </div>
+    <div class="calc-group">
+      <label>Damage per Shot — Before</label>
+      <input type="number" id="dmgBefore" placeholder="e.g. 2980">
+    </div>
+    <div class="calc-group">
+      <label>Damage per Shot — After</label>
+      <input type="number" id="dmgAfter" placeholder="e.g. 3120">
+    </div>
+    <div class="calc-group">
+      <label>Repair Rate — Before (0 if none)</label>
+      <input type="number" id="repBefore" placeholder="e.g. 0.15" step="0.01">
+    </div>
+    <div class="calc-group">
+      <label>Repair Rate — After (0 if none)</label>
+      <input type="number" id="repAfter" placeholder="e.g. 0.20" step="0.01">
+    </div>
+  </div>
+
+  <button class="calc-btn" onclick="calculate()">Calculate Effectiveness</button>
+
+  <div class="calc-result" id="calcResult">
+    <div class="result-row"><span class="result-label">EHP Change (Durability + Shield)</span><span class="result-val" id="ehpChange">—</span></div>
+    <div class="result-row"><span class="result-label">Durability Change</span><span class="result-val" id="durChange">—</span></div>
+    <div class="result-row"><span class="result-label">Shield Change</span><span class="result-val" id="shdChange">—</span></div>
+    <div class="result-row"><span class="result-label">Speed Change</span><span class="result-val" id="spdChange">—</span></div>
+    <div class="result-row"><span class="result-label">Damage Change</span><span class="result-val" id="dmgChange">—</span></div>
+    <div class="result-row"><span class="result-label">Repair Rate Change</span><span class="result-val" id="repChange">—</span></div>
+    <div class="result-row"><span class="result-label" style="color:var(--gold);font-weight:700">Overall Combat Effectiveness Gain</span><span class="result-val" id="overallChange" style="color:var(--gold);font-size:16px">—</span></div>
+    <div class="eff-bar-wrap">
+      <div class="eff-bar-label">Effectiveness Improvement</div>
+      <div class="eff-bar-bg"><div class="eff-bar-fill" id="effBar" style="width:0%"></div></div>
+    </div>
+    <div id="verdict" class="note" style="margin-top:0"></div>
+  </div>
+</section>
+
+</main>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function toggle(header) {
+  const proposal = header.parentElement;
+  proposal.classList.toggle('open');
+}
+
+function copyPost() {
+  const box = document.getElementById('postText');
+  const text = box.innerText.replace('Copy\n','').trim();
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = box.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  });
+}
+
+function pct(before, after) {
+  if (!before || before === 0) return null;
+  return ((after - before) / before * 100);
+}
+
+function fmt(val) {
+  if (val === null) return 'N/A';
+  const sign = val >= 0 ? '+' : '';
+  return sign + val.toFixed(1) + '%';
+}
+
+function calculate() {
+  const dB  = parseFloat(document.getElementById('durBefore').value)   || 0;
+  const dA  = parseFloat(document.getElementById('durAfter').value)    || 0;
+  const sB  = parseFloat(document.getElementById('shieldBefore').value)|| 0;
+  const sA  = parseFloat(document.getElementById('shieldAfter').value) || 0;
+  const spB = parseFloat(document.getElementById('spdBefore').value)   || 0;
+  const spA = parseFloat(document.getElementById('spdAfter').value)    || 0;
+  const dmB = parseFloat(document.getElementById('dmgBefore').value)   || 0;
+  const dmA = parseFloat(document.getElementById('dmgAfter').value)    || 0;
+  const rB  = parseFloat(document.getElementById('repBefore').value)   || 0;
+  const rA  = parseFloat(document.getElementById('repAfter').value)    || 0;
+
+  const ehpB = dB + sB;
+  const ehpA = dA + sA;
+  const ehpP = pct(ehpB, ehpA);
+  const durP = pct(dB, dA);
+  const shdP = pct(sB, sA);
+  const spdP = pct(spB, spA);
+  const dmgP = pct(dmB, dmA);
+  const repP = pct(rB, rA);
+
+  // Weighted overall: EHP 40%, Damage 30%, Speed 15%, Repair 15%
+  let weights = 0, weighted = 0;
+  if (ehpP !== null) { weighted += ehpP * 0.40; weights += 0.40; }
+  if (dmgP !== null) { weighted += dmgP * 0.30; weights += 0.30; }
+  if (spdP !== null) { weighted += spdP * 0.15; weights += 0.15; }
+  if (repP !== null) { weighted += repP * 0.15; weights += 0.15; }
+  const overall = weights > 0 ? weighted / weights : 0;
+
+  document.getElementById('ehpChange').textContent = ehpP !== null ? fmt(ehpP) : 'N/A';
+  document.getElementById('durChange').textContent = durP !== null ? fmt(durP) : 'N/A';
+  document.getElementById('shdChange').textContent = shdP !== null ? fmt(shdP) : 'N/A';
+  document.getElementById('spdChange').textContent = spdP !== null ? fmt(spdP) : 'N/A';
+  document.getElementById('dmgChange').textContent = dmgP !== null ? fmt(dmgP) : 'N/A';
+  document.getElementById('repChange').textContent = repP !== null ? fmt(repP) : 'N/A';
+  document.getElementById('overallChange').textContent = fmt(overall);
+
+  const barW = Math.min(Math.max(overall, 0), 40) / 40 * 100;
+  document.getElementById('effBar').style.width = barW + '%';
+
+  let verdict = '';
+  if (overall < 2) verdict = '⚠️ Minimal impact — this change may not be noticeable in combat.';
+  else if (overall < 7) verdict = '✅ Modest improvement — a meaningful but conservative buff.';
+  else if (overall < 15) verdict = '⚡ Strong buff — this unit will noticeably outperform its current state.';
+  else verdict = '🔥 Major buff — review for potential overtuning before submission.';
+
+  document.getElementById('verdict').textContent = verdict;
+  document.getElementById('calcResult').classList.add('show');
+}
+</script>
+
+<footer style="
+  background: #0d1018;
+  border-top: 1px solid #1e2840;
+  text-align: center;
+  padding: 24px 16px;
+  margin-top: 40px;
+">
+  <p style="
+    font-family: 'Fira Mono', monospace;
+    font-size: 11px;
+    color: #4a5568;
+    letter-spacing: 0.08em;
+    line-height: 1.8;
+  ">
+    This is a fan-made community balance proposal. It is not affiliated with, endorsed by, or representative of Pixonic or War Robots in any capacity.<br>
+    All game names, titan names, and weapon names referenced are the property of their respective owners.<br>
+    All stat suggestions and ideas are original fan content intended purely as community feedback.
+  </p>
+</footer>
+
+</body>
+</html>
